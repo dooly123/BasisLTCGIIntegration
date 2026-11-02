@@ -6,12 +6,30 @@ screen casts light onto the room that matches whatever is playing.
 Optional bolt-on: compiles only when both `com.basis.mediaplayer` and `at.pimaker.ltcgi` are
 present.
 
+## Do you need it?
+
+Not for one screen that shows the whole frame. If your Basis has **Basis Video Texture
+Output**, give it a RenderTexture asset with mipmaps as its **Target Texture**, and set the same
+asset as the LTCGI controller's **Video Texture**. LTCGI then lights from the player's video like
+any other video texture.
+
+This package is for the cases that route doesn't cover:
+
+- The light should match the screen. The adapter follows the screen output's projection, so a
+  side-by-side or over-under video lights with the half the screen shows, and shows the screen's
+  placeholder before the first frame and after a video ends.
+- The screen shows only part of the frame, or is made of several flat panels that each light
+  with their own part (see *A screen in panels*).
+- The screen swaps between UV layouts while the world runs. LTCGI fixes a screen's UVs when it
+  bakes, so the parts have to change in the texture instead, which **Layouts** does.
+- Your Basis doesn't have Basis Video Texture Output yet.
+
 ## Requirements
 
-Requires a Basis project from 2026-07-08 or later **and** LTCGI. Depends on:
+Requires a Basis project from 2026-07-08 or later **and** LTCGI 1.7.4 or later. Depends on:
 
 - `com.basis.mediaplayer`, which ships with Basis
-- `at.pimaker.ltcgi`, which isn't on a registry. Add it to `Packages/manifest.json` yourself:
+- `at.pimaker.ltcgi`. Add it to `Packages/manifest.json` from its repository:
 
   ```json
   "at.pimaker.ltcgi": "https://github.com/PiMaker/ltcgi.git"
@@ -62,9 +80,9 @@ LTCGI has a single live video input, so one player lights the room at a time. Wi
 more than one player, the first one enabled drives the light and the others turn themselves off
 with a warning. To switch players, disable the active adapter, then enable the other one.
 
-Outside desktop builds, Quest included, LTCGI allows only one screen in the scene, so a world
-that also ships for Quest should have just the one video light. The setup menu warns about this
-on a desktop target and refuses on any other.
+Outside desktop builds LTCGI allows only one screen in the scene, so a world built for other
+platforms too should have just the one video light. The setup menu warns about this on a desktop
+target and refuses on any other.
 
 ### By hand
 
@@ -162,8 +180,7 @@ light matches the picture without any settings of its own. For side-by-side and 
 the screen shows.
 
 By default a desktop bake sends the texture through LTCGI's blur chain. With Fast Sampling,
-which LTCGI forces outside desktop builds, it's bound to the texture LTCGI samples directly, so
-the light works on Quest too.
+which LTCGI forces outside desktop builds, it's bound to the texture LTCGI samples directly.
 
 With no picture, the light follows the screen. Before the first frame, after the player closes
 and when a video ends (unless it loops), LTCGI gets the output's placeholder, or black where it

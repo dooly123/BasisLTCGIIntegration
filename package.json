@@ -1,11 +1,11 @@
 {
   "name": "com.basis.integration.ltcgi",
   "displayName": "Basis LTCGI Integration",
-  "version": "0.0.1",
-  "description": "Feeds a Basis media player's video into LTCGI, so its screen lights the room with what's playing, on desktop and on Quest. Optional bolt-on: compiles to nothing unless both com.basis.mediaplayer and at.pimaker.ltcgi are present.",
+  "version": "0.1.0",
+  "description": "LTCGI video lighting for Basis that matches the screen. A Basis Media Player's screen lights the room with what it actually shows, following its projection and placeholder, the part of the frame it crops, each panel of a screen built from several, and UV layouts that change while the world runs. Needs LTCGI 1.7.4 or later. For one screen showing the whole frame, Basis Video Texture Output into LTCGI's Video Texture is enough.",
   "author": {
-    "name": "BasisVR",
-    "url": "https://github.com/BasisVR"
+    "name": "towneh",
+    "url": "https://github.com/towneh"
   },
   "license": "MIT OR Apache-2.0",
   "basis": "2026-07-08",

@@ -48,7 +48,7 @@ namespace Basis.Integration.LTCGI.Editor
             {
                 if (!other.enabled || other.gameObject == screenRenderer.gameObject) continue;
 #if UNITY_STANDALONE
-                Debug.LogWarning($"LTCGI video light: '{other.name}' is already an LTCGI screen. LTCGI allows one screen outside desktop builds, so this scene won't bake for Quest.", other);
+                Debug.LogWarning($"LTCGI video light: '{other.name}' is already an LTCGI screen. LTCGI allows one screen outside desktop builds, so this scene won't bake for other platforms.", other);
                 break;
 #else
                 Debug.LogError($"LTCGI video light: '{other.name}' is already an LTCGI screen, and LTCGI allows only one on this platform.", other);
