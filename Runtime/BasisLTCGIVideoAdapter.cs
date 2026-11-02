@@ -41,6 +41,50 @@ namespace Basis.Integration.LTCGI
         [Tooltip("Cells per row when there are several parts, filled left to right from the bottom row up. 0 puts every part in one row. LTCGI blurs its texture at a fixed 2:1, so a grid whose texture is near that shape blurs evenly both ways.")]
         [Min(0)] public int Columns;
 
+        [Tooltip("Alternative Source Rects to switch between at runtime with the Layout property, for a screen whose mesh swaps between UV layouts. Each must have as many rectangles as Source Rects, because each part's cell stays where the LTCGI screens were baked.")]
+        public SourceLayout[] Layouts;
+
+        /// <summary>A named set of rectangles for <see cref="SourceRects"/>, used by <see cref="Layouts"/>.</summary>
+        [System.Serializable]
+        public struct SourceLayout
+        {
+            [Tooltip("A label for the inspector. The adapter doesn't use it.")]
+            public string Name;
+
+            [Tooltip("The rectangles Source Rects takes when this layout is chosen.")]
+            public Rect[] Rects;
+        }
+
+        /// <summary>
+        /// Index of the layout in use from <see cref="Layouts"/>, or -1 if none has been set. Setting it copies that
+        /// layout's rectangles into <see cref="SourceRects"/>, and the light follows from the next frame. It's an int so
+        /// that a uGUI Dropdown's On Value Changed can set it. An index outside <see cref="Layouts"/>, or a layout with a
+        /// different number of rectangles, logs a warning and changes nothing.
+        /// </summary>
+        public int Layout
+        {
+            get => layout;
+            set
+            {
+                if (Layouts == null || value < 0 || value >= Layouts.Length)
+                {
+                    BasisDebug.LogWarning($"BasisLTCGIVideoAdapter on '{name}': there's no layout {value}, as Layouts has {(Layouts != null ? Layouts.Length : 0)}. Layout not changed.", BasisDebug.LogTag.Video);
+                    return;
+                }
+                Rect[] rects = Layouts[value].Rects;
+                int parts = SourceRects != null ? SourceRects.Length : 0;
+                if (rects == null || rects.Length != parts)
+                {
+                    BasisDebug.LogWarning($"BasisLTCGIVideoAdapter on '{name}': layout {value} has {(rects != null ? rects.Length : 0)} rectangles, but Source Rects has {parts}, the number the LTCGI screens were baked for. Layout not changed.", BasisDebug.LogTag.Video);
+                    return;
+                }
+                layout = value;
+                SourceRects = (Rect[])rects.Clone();
+            }
+        }
+
+        private int layout = -1;
+
         private BasisMediaPlayer subscribed;
         private BasisVideoMaterialOutput output;
         // LTCGI has one live video input, so the first adapter enabled takes it and any other

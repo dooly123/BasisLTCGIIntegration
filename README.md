@@ -126,8 +126,12 @@ LTCGI allows only one screen elsewhere.
    bakes, so bake again after changing the number of parts, **Columns** or a quad's UVs.
 
 The rectangles in **Source Rects** can change at runtime, for a screen whose mesh swaps between
-UV layouts: the next frame copies the new parts into the same cells. The number of parts and
+UV layouts, and the next frame copies the new parts into the same cells. The number of parts and
 **Columns** set where the cells are, so keep those fixed once the quads are baked.
+
+For a screen with a few known layouts, list each in **Layouts** (one rectangle per part, as in
+**Source Rects**) and set **Layout** to switch between them. It takes the layout's index, so a
+uGUI Dropdown's **On Value Changed** can drive it with no script of its own.
 
 ## Component reference
 
@@ -139,6 +143,12 @@ UV layouts: the next frame copies the new parts into the same cells. The number 
 | **Max Resolution** | 1024 | Longest side of the texture handed to LTCGI. Larger video is scaled down. |
 | **Source Rects** | one, (0, 0, 1, 1) | The parts of the picture handed to LTCGI, in the UVs the screen shows them with, in this order. With one part, set it to the part of the frame the screen shows and give the `LTCGI_Screen`'s quad UVs from 0 to 1, so the light and reflections match the screen and nothing outside it reaches LTCGI. With several, each part fills one cell of the texture LTCGI reads and the quad of the screen for that part takes the cell's UVs (see *A screen in panels*). The rectangles can change at runtime, for a screen that swaps its UV layout. |
 | **Columns** | 0 | Cells per row when there are several parts, filled left to right from the bottom row up. 0 puts every part in one row, part i of n covering u from i/n to (i+1)/n. Choose the columns that bring the whole texture nearest 2:1 (see *A screen in panels*). Cells left without a part are black. |
+| **Layouts** | none | Alternative **Source Rects** to switch between with **Layout**. Each has a name for the inspector and must have as many rectangles as **Source Rects**. |
+
+**Layout** is an `int` property and isn't shown in the inspector. Setting it to *n* replaces
+**Source Rects** with the rectangles of entry *n* in **Layouts**, and the light follows from the
+next frame. An index out of range, or a layout with a different number of rectangles, logs a
+warning and changes nothing.
 
 ## How it works
 
